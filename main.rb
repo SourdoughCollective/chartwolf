@@ -432,7 +432,7 @@ end
 ## MAIN
 
 # read file
-@source_file = process_file_name(".gv") ## this comes from the alex_file_utilities pack
+@source_file = process_file_name(".gv") ## this comes file_utilities
 original_lines = []
 IO.readlines(@source_file).each { |line| original_lines << line} ## load all lines from the source_file into the original_lines array.
 
