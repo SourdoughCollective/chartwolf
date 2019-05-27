@@ -26,3 +26,7 @@ Table syntax is notoriously difficult. Choose two of:
 1. editing ease
 2. semantic syntax
 3. quasi-WYSIWYG (in the way Markdown as a whole is quasi-WYSIWYG and XML is not).
+
+# TODO
+
+- whitespace on RHS of nodes. (Maybe Linux-only?)
