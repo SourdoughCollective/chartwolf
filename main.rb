@@ -2,10 +2,10 @@
 
 ## DEPENDENCIES
 
-require "verbose.rb"
-require "_file_utilities.rb"
-require "_conversion_utilities.rb"
-require "flowchart_keyword_list"
+require "../verbose.rb"
+require "_file_utilities.rb" #TODO: extract the relevant methods
+require "_conversion_utilities.rb" #TODO: extract the relevant methods
+require "flowchart_keyword_list" # TODO: change this to stylesheet
 require "diacritic_correction"
 
 ## OPTION PARSER
