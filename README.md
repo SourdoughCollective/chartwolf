@@ -3,12 +3,12 @@ Graphviz pre-processor allowing for semantic styling and a more natural table ma
 
 ## The Name
 
-It creates flowcharts. "Wolf" is "flow" backwards.
+It creates flowcharts and "wolf" is "flow" backwards.
 
 ## Dependencies
 
-ruby
-graphviz
+- ruby
+- graphviz
 
 ## Purpose
 
