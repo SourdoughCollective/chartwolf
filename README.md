@@ -27,6 +27,14 @@ Table syntax is notoriously difficult. Choose two of:
 2. semantic syntax
 3. quasi-WYSIWYG (in the way Markdown as a whole is quasi-WYSIWYG and XML is not).
 
+Most table syntaxes (e.g. most flavours of Markdown) choose 3 over 2 over 1, relying on editor plugins to simplify the editing process. Chartwolf prioritises 2 over 3, with some edge-case concessions to 1. Rather than try to reproduce the table's visual appearance, we borrow from markdown list syntax to create a simple, intuitive, and (usually) semantically meaningful markup. 
+
+This syntax will not be appropriate for all table-creation use-cases. Aside from other issues, the semantic relationship gets lost with more columns. The formatting of graphviz nodes as tables, however, is an appropriate use-case, as these should have relatively few columns (and even rows).
+
+# Brief introduction to the syntax
+
+(See wiki for more detail.)
+
 # TODO
 
 - whitespace on RHS of nodes. (Maybe Linux-only?)
