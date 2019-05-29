@@ -31,10 +31,10 @@ Most table syntaxes (e.g. most flavours of Markdown) choose 3 over 2 over 1, rel
 
 This syntax will not be appropriate for all table-creation use-cases. Aside from other issues, the semantic relationship gets lost with more columns. The formatting of graphviz nodes as tables, however, is an appropriate use-case, as these should have relatively few columns (and even rows).
 
-# Brief introduction to the syntax
+## Brief introduction to the syntax
 
 (See wiki for more detail.)
 
-# TODO
+## TODO
 
 - whitespace on RHS of nodes. (Maybe Linux-only?)
