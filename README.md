@@ -35,6 +35,22 @@ This syntax will not be appropriate for all table-creation use-cases. Aside from
 
 (See wiki for more detail.)
 
+```
+#Aristotles_Functional_Argument
+-* Aristotle's Functional Argument
+- Step 1
+- Step 2
+- Step 3
+```
+
+```
+#Varieties_of_Utilitarianism
+-* Varieties of Utilitarianism
++ Variety 1
++ Variety 2
++ Variety 3
+```
+
 ## TODO
 
 - whitespace on RHS of nodes. (Maybe Linux-only?)
