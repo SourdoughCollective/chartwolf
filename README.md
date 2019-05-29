@@ -77,6 +77,27 @@ Varieties_of_Utilitarianism [label = <
 <TR><TD>Variety 1</TD><TD>Variety 2</TD><TD>Variety 3</TD></TR>>]
 ```
 
+### Example 3
+
+```
+#Aristotles_Argument_with_Comments
+-* Aristotle's Argument
+- Step 1
+ - Comment on step 1
+- Step 2
+ - Comment on step 2
+- Step 3
+ - Comment on step 3
+```
+produces:
+```
+Aristotles_Argument_with_Comments [label = <
+<TR><TD>Aristotle's Argument</TD></TR>
+<TR><TD>Step 1</TD><TD>Comment on Step 1</TD></TR>
+<TR><TD>Step 2</TD><TD>Comment on Step 2</TD></TR>
+<TR><TD>Step 3</TD><TD>Comment on Step 3</TD></TR>>]
+```
+
 ## TODO
 
 - whitespace on RHS of nodes. (Maybe Linux-only?)
