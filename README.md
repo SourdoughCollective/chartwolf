@@ -35,6 +35,16 @@ This syntax will not be appropriate for all table-creation use-cases. Aside from
 
 (See wiki for more detail.)
 
+In a nutshell:
+
+- `#Aristotles_Functional_Argument` is the name that graphviz will know the node by.
+- `- sentence sentence sentence` is a new item in a *vertical* list (a 'stack' -- the hyphen looks like a pancake)
+- `+ sentence sentence sentence` is a new item in a *horizontal* list (the plus sign doesn't look like a pancake)
+- `-* sentence sentence sentence` and `+* sentence sentence sentence` are as before but their table cell is highlighted (i.e. font colour becomes background colour and vice versa).
+- indenting by one space more than the previous item turns an item into a child of the previous item.
+
+### Example 1
+
 ```
 #Aristotles_Functional_Argument
 -* Aristotle's Functional Argument
@@ -42,6 +52,16 @@ This syntax will not be appropriate for all table-creation use-cases. Aside from
 - Step 2
 - Step 3
 ```
+produces:
+```
+Aristotles_Functional_Argument [label = <
+<TR><TD>Aristotle's Functional Argument</TD></TR>
+<TR><TD>Step 1</TD></TR>
+<TR><TD>Step 2</TD></TR>
+<TR><TD>Step 3</TD></TR>>]
+```
+
+### Example 2
 
 ```
 #Varieties_of_Utilitarianism
@@ -49,6 +69,12 @@ This syntax will not be appropriate for all table-creation use-cases. Aside from
 + Variety 1
 + Variety 2
 + Variety 3
+```
+produces:
+```
+Varieties_of_Utilitarianism [label = <
+<TR><TD>Varieties of Utilitarianism</TD></TR>
+<TR><TD>Variety 1</TD><TD>Variety 2</TD><TD>Variety 3</TD></TR>>]
 ```
 
 ## TODO
