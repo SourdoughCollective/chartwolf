@@ -59,8 +59,8 @@ class Line
     @line = line
     @current_row = current_row
     @line_match = @line.match(/^([\#\s\*\+\-]*)(.+)/) # two capture groups: prefix and text
-    @prefix = @line_match ? @line_match[1] : "NONE"
-    @text = @line_match ? @line_match[2] : "NONE"
+    @prefix = $1
+    @text = $2
     @@lines << self # add this to the list of lines in the item
     @row_span = 1
   end
