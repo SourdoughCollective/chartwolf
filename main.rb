@@ -35,10 +35,8 @@ DIALOGUE_ARRAY = {
 
 VERBOSE = true
 
-# TODO: move to Configure border thickness in the flowchart_keyword_list.
-
 LINE_LENGTH = 40
-TABLE_BORDER_THICKNESS = 3
+TABLE_BORDER_THICKNESS = 3 # TODO: move to Configure border thickness in the flowchart_keyword_list.
 
 def calc_table_line_length_per_column(columns)
   case columns
@@ -126,7 +124,7 @@ class Item
   end
 
   def add_line_to_item(line) # add line to array of lines.
-    @item << line.rstrip # only takes away spaces after the text
+    @item << line.rstrip
   end
 
   def item_size
@@ -141,8 +139,8 @@ class Item
     @@items
   end
 
-  def complete? # check if complete
-    @item.last.strip.eql?("") #why does .divider? not work? # last item will always be empty (or spaces) string
+  def complete? # check if complete # last item will always be empty (or spaces) string
+    @item.last.strip.eql?("") #why does .divider? not work? 
   end
 
   def check_for_row_spans(temp_row_array)
@@ -170,7 +168,7 @@ class Item
         line.row_span = 1
         line.additional_for_row_span = "</TR><TR>"
       else
-        line.row_span = 2 # this is specific case. What about: array_of_stacks_within_rows.flatten.uniq.size
+        line.row_span = 2 # TODO: this is specific case. What about: array_of_stacks_within_rows.flatten.uniq.size
       end
       iter = iter + 1
     }
@@ -189,7 +187,6 @@ class Item
         elsif current_line.style?
           @item_style = current_line.line.delete('{}').gsub("-", "_").gsub(/\s.*/, "").to_sym
         elsif current_line.divider? # if this is the last line in the item
-          #ROW THINGY: need something that looks back through temp_row_array, sees if there are any same-indent stacks, then transform everything so that these have 'rowspan = 1' and the others have larger rowspans.
           array_of_stacks_within_rows = check_for_row_spans(temp_row_array)
           if array_of_stacks_within_rows.size > 0
             act_on_row_spans(temp_row_array, array_of_stacks_within_rows)
