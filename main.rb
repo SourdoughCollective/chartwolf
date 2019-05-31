@@ -26,11 +26,11 @@ $overall_text = {
 ## DIALOGUE
 
 DIALOGUE_ARRAY = {
-  sorted: "Sorting done!",
-  formatted: "Formatting done!!",
-  processed: "Processing done! Processed lines:",
-  diacritics: "Diacritic-correction done!!",
-  onedrive: "Done the OneDrive thing",
+  sorted: "Sorted",
+  formatted: "Formatted",
+  processed: "Processed. Number of lines:",
+  diacritics: "Diacritics corrected",
+  onedrive: "Returned to OneDrive location",
   trash: "Trashed SVG temp files"
 }
 
@@ -61,33 +61,29 @@ class Line
   def initialize(line, current_row)
     @line = line
     @current_row = current_row
-    @line_match = @line.match(/^([\#\s\*\+\-]*)(.+)/)
-    @prefix = @line_match ? @line_match[1] : "NONE" # need to get rid of space(s?) at end
-    @text = @line_match ? @line_match[2] : "NONE" # everything but prefix
-    @@lines << self # add this to the list of lines in the item # **am I sure this is in the item?**
+    @line_match = @line.match(/^([\#\s\*\+\-]*)(.+)/) # two capture groups: prefix and text
+    @prefix = @line_match ? @line_match[1] : "NONE"
+    @text = @line_match ? @line_match[2] : "NONE"
+    @@lines << self # add this to the list of lines in the item
     @row_span = 1
-  end
-
-  def row # on what row is this cell? NB: no need for multiple-row cell. biggest cell is the row.
-    column_begin.eql?(0) ? (@current_row + 1) : @current_row # if there is a space, we know there is a column before this, so this is not a new row. if no space, no preceding column, so new row.
   end
 
   def column_begin(previous_rows, previous_columns_on_this_row) # on what column does this cell (incl multi-column cell) start?
     if stack? # TODO: this will be OK for the moment (because I won't have many rack-rack-rack tables. but will need to be adjusted (i.e. if third column in a rack table has some further stacked subdivisions, they would be one-spaced, but in fact in third column).)
-      iterat = @prefix.match(/^\s*[\#\s\*\+\-]/).to_s.count(" ") # how many spaces tells you what column it is in. 0=first, etc.
+      iterator = @prefix.match(/^\s*[\#\s\*\+\-]/).to_s.count(" ") # how many spaces tells you what column it is in. 0=first, etc.
     elsif rack? # can't I just count the array items in previous_columns_on_this_row and get the column_begin of the last item in previous_rows???
       previous_lines = previous_rows + previous_columns_on_this_row
-      iterat = 0
+      iterator = 0
       previous_lines.flatten.reverse.each { |line|
         if line.line.start_with?(/[\s]*\-/)
-          iterat = (iterat + line.column_begin(previous_rows, previous_columns_on_this_row)) # might have to change these variables
+          iterator = (iterator + line.column_begin(previous_rows, previous_columns_on_this_row)) # might have to change these variables
           break
         else # could make this .start_with?(/[\s]*\+/) for extra security
-          iterat = iterat + 1
+          iterator = iterator + 1
         end
         } #how many +s before, added to the position of the previous stack, tells you what column it is in. first-child of first-column = 0+0= 0=first, etc. first-child of second column = 0+1=1, etc.
     end
-    iterat
+    iterator
   end
 
   def name? # a hash in the prefix means this is the name of the row
