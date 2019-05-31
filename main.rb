@@ -106,6 +106,10 @@ class Line
   def divider? # is this line a divider between items?
     @line.strip.eql?("") # empty (or spaces) string ## isn't line an array?
   end
+  
+  def TODO
+    line.match(/^[\s]*\-/)
+  end
 
   def self.lines
     @@lines
