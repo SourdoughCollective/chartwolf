@@ -91,11 +91,11 @@ class Line
     @line.include?("{")
   end
 
-  def stack? # an asterisk in the prefix means highlight the row. (and highlighting usually means colour background + bold.)
-    @prefix.include?("-")
+  def stack? # an hyphen in the prefix means a 'stack' i.e. vertical list
+    @prefix.include?("-") # any advantage to  @line.match(/^[\s]*\-/)   ?
   end
 
-  def rack? # an asterisk in the prefix means highlight the row. (and highlighting usually means colour background + bold.)
+  def rack? # an plus in the prefix means a 'rack' i.e. horizontal list
     @prefix.include?("+")
   end
 
@@ -107,10 +107,6 @@ class Line
     @line.strip.eql?("") # empty (or spaces) string ## isn't line an array?
   end
   
-  def TODO
-    line.match(/^[\s]*\-/)
-  end
-
   def self.lines
     @@lines
   end
@@ -150,8 +146,8 @@ class Item
   def check_for_row_spans(temp_row_array)
     array_of_indent_counts = []
     temp_row_array.flatten.reverse.each { |line|
-        if line.line.match(/^[\s]*\-/)
-          array_of_indent_counts << line.line.match(/^[\s]*\-/).to_s.count(" ")
+        if line.stack?
+          array_of_indent_counts << line.prefix.count(" ")
         end
       }
     previous_row_indent_number = -1
