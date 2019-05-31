@@ -8,7 +8,8 @@ It creates flowcharts and "wolf" is "flow" backwards.
 ## Dependencies
 
 - ruby
-- graphviz
+- graphviz (DOT->SVG)
+- inkscape (SVG->PDF)
 
 ## Purpose
 
