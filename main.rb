@@ -249,7 +249,6 @@ def tidy_up!(label)
   label.gsub!("<<BR/>", "<BR/><") # Quickfix: angle-bracket clash
 end
 
-@original_dirname = ""
 @target_arr = ""
 
 def trash_intermediary_files(extension_array)
