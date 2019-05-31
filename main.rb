@@ -464,15 +464,18 @@ end
 original_lines = []
 IO.readlines(@source_file).each { |line| original_lines << line} ## load all lines from the source_file into the original_lines array.
 
-# process, format, diacritics
 item_arrays = sort_lines_into_items(original_lines)
 verbose(:sorted)
+
 processed_lines = process_items(item_arrays)
 verbose(:processed)
 verbose("#{processed_lines.size}")# verbose("Processing done! #{processed_lines.size} lines")
+
 formatted_lines = format_node_lines(processed_lines)
 verbose(:formatted)
+
 correct_diacritics(formatted_lines) && verbose(:diacritics)
+
 $overall_text[:node] = formatted_lines
 $overall_text[:postnode] = $overall_text[:postnode].each { |line| add_edge_formatting!(line) }
 
