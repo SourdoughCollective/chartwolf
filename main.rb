@@ -30,7 +30,6 @@ DIALOGUE_ARRAY = {
   formatted: "Formatted",
   processed: "Processed. Number of lines:",
   diacritics: "Diacritics corrected",
-  onedrive: "Returned to OneDrive location",
   trash: "Trashed SVG temp files"
 }
 
@@ -253,21 +252,6 @@ end
 @original_dirname = ""
 @target_arr = ""
 
-def one_drive_check(source_file) # For ONEDRIVE
-  File.dirname(source_file).include?(" ")
-end
-
-def move_file_to_home_directory(source_file) # For ONEDRIVE
-  @original_dirname = File.dirname(source_file)
-  FileUtils.mv(source_file, "#{Dir.home}") # move source_file to home directory
-  source_file = File.new("#{Dir.home}/#{File.basename(source_file)}", "r") # delete when freed from OneDrive
-end
-
-def move_files_back_to_original_directory(source_file) # For ONEDRIVE # TODO: give this some optional variables so it is more reusable
-  FileUtils.mv(source_file, @original_dirname) # Move the original file back
-  FileUtils.mv("#{Dir.home}/#{@target_arr[2]}.pdf", @original_dirname) # Move the final file back
-end
-
 def trash_intermediary_files(extension_array)
   extension_array.each { |ext|
     Dir.glob("#{@target_arr[0]}/*#{ext}").each { |file| `trash '#{file}'` }
@@ -278,7 +262,6 @@ def process_file_name(original_extension, suffix = "")
  source_file = ""
  if File.exist?("#{ARGV[0]}") #TODO: replace with (ARGV[0])
   source_file = File.new("#{ARGV[0]}", "r") # variable with file in it.
-  one_drive_check(source_file) && move_file_to_home_directory(source_file) # if this is a file on One_Drive, move to home directory (to avoid filename spaces) ## delete when freed from OneDrive
   @target_arr = File.split(source_file).insert(1, "/") # target_arr is ["filepath" "/" "filename.ext"]
   @target_arr[2].sub!("#{original_extension}", "#{suffix}") # target_arr is now ["filepath" "/" "filename"]
  else
@@ -498,5 +481,4 @@ write_to_temp_file($overall_text[:prenode] + $overall_text[:node] + $overall_tex
 
 # tidying up
 convert_GV_to_PDF(@target_arr[0..1].join, @target_arr[2]) && verbose("converted #{@target_arr[0..1].join}#{@target_arr[2]}")
-@one_drive && move_files_back_to_original_directory && verbose(:onedrive) # delete when freed from OneDrive
 trash_intermediary_files(TEMP_FILES) && verbose(:trash)
