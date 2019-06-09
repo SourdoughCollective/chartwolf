@@ -382,7 +382,7 @@ def process_items(raw_items) # processes lines into items
     max_columns = item.max_columns(matrix)
     table_line_length_per_column = calc_table_line_length_per_column(max_columns)
     item_color = FlowchartKeywords::NODE_KEYS[item.item_style].fetch(:color, "blue4")
-    item_shape = matrix.size > 2 ? "plaintext" : FlowchartKeywords::NODE_KEYS[item.item_style].fetch(:shape, "plaintext")
+    item_shape = FlowchartKeywords::NODE_KEYS[item.item_style].fetch(:shape, "plaintext")
     processed_lines << "\n" + item.name_text.delete_prefix("#")
     if item_shape.eql?("plaintext")
       processed_lines << "[label=<<TABLE ALIGN=\"LEFT\" BORDER=\"#{TABLE_BORDER_THICKNESS}\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\" STYLE=\"ROUNDED\" COLOR=\"#{item_color}\">" # TODO: derive this from style
