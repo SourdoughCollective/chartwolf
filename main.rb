@@ -140,7 +140,7 @@ class Item
   end
 
   def complete? # check if complete # last item will always be empty (or spaces) string
-    @item.last.strip.eql?("") #why does .divider? not work? 
+    @item.last.strip.eql?("") #why does .divider? not work here? 
   end
 
   def check_for_row_spans(temp_row_array)
@@ -162,15 +162,15 @@ class Item
   end
 
   def act_on_row_spans(temp_row_array, array_of_stacks_within_rows)
-    iter = 0
+    iterator = 0
     temp_row_array.each { |line|
-      if array_of_stacks_within_rows.flatten.include?(iter)
+      if array_of_stacks_within_rows.flatten.include?(iterator)
         line.row_span = 1
         line.additional_for_row_span = "</TR><TR>"
       else
         line.row_span = 2 # TODO: this is specific case. What about: array_of_stacks_within_rows.flatten.uniq.size
       end
-      iter = iter + 1
+      iterator = iterator + 1
     }
   end
 
