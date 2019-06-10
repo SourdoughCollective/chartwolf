@@ -4,7 +4,7 @@
 
 require "../verbose.rb"
 require "fileutils"
-require "flowchart_keyword_list" # TODO: change this to stylesheet
+require "../flowchart_keyword_list"
 require "diacritic_correction"
 
 ## OPTION PARSER
