@@ -5,7 +5,7 @@
 require "../verbose.rb"
 require "fileutils"
 require "../flowchart_keyword_list"
-require "diacritic_correction"
+require "../diacritic_correction"
 
 ## OPTION PARSER
 
