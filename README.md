@@ -54,6 +54,7 @@ In a nutshell:
 
 ```
 #Aristotles_Functional_Argument
+{{default}}
 -* Aristotle's Functional Argument
 - Step 1
 - Step 2
@@ -65,13 +66,14 @@ Aristotles_Functional_Argument [label = <
 <TR><TD>Aristotle's Functional Argument</TD></TR>
 <TR><TD>Step 1</TD></TR>
 <TR><TD>Step 2</TD></TR>
-<TR><TD>Step 3</TD></TR>>]
+<TR><TD>Step 3</TD></TR>>, color = blue4, shape = plaintext, style = solid]
 ```
 
 ### Example 2
 
 ```
 #Varieties_of_Utilitarianism
+{{default}}
 -* Varieties of Utilitarianism
 + Variety 1
 + Variety 2
@@ -81,13 +83,14 @@ produces:
 ```
 Varieties_of_Utilitarianism [label = <
 <TR><TD>Varieties of Utilitarianism</TD></TR>
-<TR><TD>Variety 1</TD><TD>Variety 2</TD><TD>Variety 3</TD></TR>>]
+<TR><TD>Variety 1</TD><TD>Variety 2</TD><TD>Variety 3</TD></TR>>, color = blue4, shape = plaintext, style = solid]
 ```
 
 ### Example 3
 
 ```
-#Aristotles_Argument_with_Comments
+#Aristotles_Argument_with_Comments 
+{{default}}
 -* Aristotle's Argument
 - Step 1
  - Comment on step 1
@@ -102,7 +105,7 @@ Aristotles_Argument_with_Comments [label = <
 <TR><TD>Aristotle's Argument</TD></TR>
 <TR><TD>Step 1</TD><TD>Comment on Step 1</TD></TR>
 <TR><TD>Step 2</TD><TD>Comment on Step 2</TD></TR>
-<TR><TD>Step 3</TD><TD>Comment on Step 3</TD></TR>>]
+<TR><TD>Step 3</TD><TD>Comment on Step 3</TD></TR>>, color = blue4, shape = plaintext, style = solid]
 ```
 
 ## TODO
