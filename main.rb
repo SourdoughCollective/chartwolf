@@ -4,10 +4,10 @@
 
 ## DEPENDENCIES
 
-require "verbose"
-require "fileutils"
-require "flowchart_keyword_list"
-require "diacritic_list"
+require_relative "./lib/verbose"
+require_relative "fileutils"
+require_relative "./lib/flowchart_keyword_list"
+require_relative "./lib/diacritic_list"
 
 ## OPTION PARSER
 
