@@ -5,7 +5,7 @@
 ## DEPENDENCIES
 
 require_relative "./lib/verbose"
-require_relative "fileutils"
+require "fileutils"
 require_relative "./lib/flowchart_keyword_list"
 require_relative "./lib/diacritic_list"
 
