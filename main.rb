@@ -108,7 +108,7 @@ class Line
   def divider? # is this line a divider between items?
     @line.strip.eql?("") # empty (or spaces) string ## isn't line an array?
   end
-  
+
   def self.lines
     @@lines
   end
@@ -142,7 +142,7 @@ class Item
   end
 
   def complete? # check if complete # last item will always be empty (or spaces) string
-    @item.last.strip.eql?("") #why does .divider? not work here? 
+    @item.last.strip.eql?("") #why does .divider? not work here?
   end
 
   def check_for_row_spans(temp_row_array)
@@ -184,16 +184,16 @@ class Item
       iterator = 0 # for each column_begin below will need to add the item_lines array truncated to the iterator.
       item_lines.each { |line|
         current_line = Line.new(line, current_row)
-        if current_line.name?
-          @item_name = current_line #might be better to make this the text rather than object
-        elsif current_line.style?
-          @item_style = current_line.line.delete('{}').gsub("-", "_").gsub(/\s.*/, "").to_sym
-        elsif current_line.divider? # if this is the last line in the item
+        if current_line.divider? # if this is the last line in the item
           array_of_stacks_within_rows = check_for_row_spans(temp_row_array)
           if array_of_stacks_within_rows.size > 0
             act_on_row_spans(temp_row_array, array_of_stacks_within_rows)
           end
           table_matrix << temp_row_array # add the last row to the table_matrix (not including divider.)
+        elsif current_line.name?
+          @item_name = current_line #might be better to make this the text rather than object
+        elsif current_line.style?
+          @item_style = current_line.line.delete('{}').gsub("-", "_").gsub(/\s.*/, "").to_sym
         elsif current_line.column_begin(table_matrix, temp_row_array).eql?(0) # if this is the first cell in a new row
           array_of_stacks_within_rows = check_for_row_spans(temp_row_array)
           if array_of_stacks_within_rows.size > 0
@@ -380,6 +380,7 @@ end
 def process_items(raw_items) # processes lines into items
   processed_lines = []
   raw_items.each { |item|
+    puts item.name_text
     matrix = item.sort_lines_into_row_arrays
     max_columns = item.max_columns(matrix)
     table_line_length_per_column = calc_table_line_length_per_column(max_columns)
@@ -442,7 +443,7 @@ def correct_diacritics(formatted_lines)
     formatted_lines.each { |line| line.gsub!(wrong, right) }
   }
 end
-      
+
 def convert_GV_to_SVG(filepath, filename) # note: filename should exclude extension
   `dot -Tsvg #{TEMP_FILE} -o #{filepath}#{filename}.svg` # change this. make TEMP_FILE a parameter.
 end
@@ -451,7 +452,7 @@ def convert_SVG_to_PDF(filepath, filename) # note: filename should exclude exten
   `inkscape -f #{filepath}#{filename}.svg -A #{filepath}#{filename}.pdf --without-gui`
 end
 
-def convert_GV_to_PDF(filepath, filename) # note: filename should exclude extension. 
+def convert_GV_to_PDF(filepath, filename) # note: filename should exclude extension.
   convert_GV_to_SVG(filepath, filename) && convert_SVG_to_PDF(filepath, filename) # Two separate conversion methods because dot doesn't do italics if you convert straight to pdf
 end
 
