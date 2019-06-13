@@ -1,11 +1,13 @@
+#! /usr/bin/env ruby
+
 # Usage: ~/Code/CLI/flowcharts/chartwolf.rb ~/file.gv
 
 ## DEPENDENCIES
 
-require "../verbose.rb"
+require "verbose"
 require "fileutils"
-require "../flowchart_keyword_list"
-require "../diacritic_list"
+require "flowchart_keyword_list"
+require "diacritic_list"
 
 ## OPTION PARSER
 
