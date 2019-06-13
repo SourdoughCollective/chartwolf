@@ -380,7 +380,6 @@ end
 def process_items(raw_items) # processes lines into items
   processed_lines = []
   raw_items.each { |item|
-    puts item.name_text
     matrix = item.sort_lines_into_row_arrays
     max_columns = item.max_columns(matrix)
     table_line_length_per_column = calc_table_line_length_per_column(max_columns)
