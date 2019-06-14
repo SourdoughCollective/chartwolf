@@ -40,14 +40,14 @@ In a nutshell:
 
 - `# sentence` is a comment
   - Note the space between pound-sign and comment text.
-- `#Aristotles_Functional_Argument` is the name that graphviz will know the node by.
+- `#Aristotles_Function_Argument` is the name that graphviz will know the node by.
   - Always first line
   - No space between `#` and name.
 - `{{default}}` is the style.
   - Second line (TODO: option include this in name line instead).
-- `- sentence sentence sentence` is a new item in a *vertical* list (a 'stack' -- the hyphen looks like a pancake)
-- `+ sentence sentence sentence` is a new item in a *horizontal* list (the plus sign doesn't look like a pancake)
-- `-* sentence sentence sentence` and `+* sentence sentence sentence` are as before but their table cell is highlighted (i.e. font colour becomes background colour and vice versa).
+- `- This is a sentence` is a new item in a *vertical* list (a 'stack' -- the hyphen looks like a pancake)
+- `+ This is a sentence` is a new item in a *horizontal* list (the plus sign doesn't look like a pancake)
+- `-* This is a sentence` and `+* This is a sentence` are as before but their table cell is highlighted (i.e. font colour becomes background colour and vice versa).
 - indenting by one space more than the previous item turns an item into a child of the previous item.
 
 ### Example 1
