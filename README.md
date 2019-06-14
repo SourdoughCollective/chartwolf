@@ -53,17 +53,17 @@ In a nutshell:
 ### Example 1
 
 ```
-#Aristotles_Functional_Argument
+#Aristotles_Function_Argument
 {{default}}
--* Aristotle's Functional Argument
+-* Aristotle's Function Argument
 - Step 1
 - Step 2
 - Step 3
 ```
-produces:
+produces the following pure graphviz syntax:
 ```
-Aristotles_Functional_Argument [label = <
-<TR><TD>Aristotle's Functional Argument</TD></TR>
+Aristotles_Function_Argument [label = <
+<TR><TD>Aristotle's Function Argument</TD></TR>
 <TR><TD>Step 1</TD></TR>
 <TR><TD>Step 2</TD></TR>
 <TR><TD>Step 3</TD></TR>>, color = blue4, shape = plaintext, style = solid]
@@ -79,7 +79,7 @@ Aristotles_Functional_Argument [label = <
 + Variety 2
 + Variety 3
 ```
-produces:
+produces the following pure graphviz syntax:
 ```
 Varieties_of_Utilitarianism [label = <
 <TR><TD>Varieties of Utilitarianism</TD></TR>
@@ -99,7 +99,7 @@ Varieties_of_Utilitarianism [label = <
 - Step 3
  - Comment on step 3
 ```
-produces:
+produces the following pure graphviz syntax:
 ```
 Aristotles_Argument_with_Comments [label = <
 <TR><TD>Aristotle's Argument</TD></TR>
@@ -113,3 +113,4 @@ Aristotles_Argument_with_Comments [label = <
 - whitespace on RHS of nodes. (Maybe Linux-only?)
 - make the calculation of width/height-sharing match the specification (see wiki). i.e. 'generations' (rather than items) share width equally. Allows to differentiate between 'parent-child-grandchild' (third-third-third) and 'parent-(two children)' (half-quarter-quarter).
 - make the above work for rack as well as stack.
+- allow for various outputs (especially stopping the process at SVG stage for those who don't want inkscape/pdf)
