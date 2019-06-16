@@ -4,8 +4,8 @@
 
 ## DEPENDENCIES
 
-require_relative "./lib/verbose"
 require "fileutils"
+require_relative "./lib/verbose"
 require_relative "./lib/flowchart_keyword_list"
 require_relative "./lib/diacritic_list"
 
@@ -15,7 +15,7 @@ require_relative "./lib/diacritic_list"
 
 ## PATHS
 
-TEMP_FILE = "#{Dir.home}/temp-phil-graphviz.gv"
+TEMP_FILE = "#{Dir.home}/temp_graphviz.gv"
 
 ## CONSTANTS
 
@@ -23,6 +23,11 @@ $overall_text = {
   prenode: [],
   node: [],
   postnode: []
+}
+
+$markers = {
+  start_node: "## NODES",
+  end_node: "## EDGES"
 }
 
 ## DIALOGUE
@@ -85,6 +90,17 @@ class Line
     iterator
   end
 
+  def type?(type)
+    case type
+    when name then "\#"
+    when style then "{"
+    when stack then "-"
+    when rack then "+"
+    when highlight then "*"
+    when item_end then ""
+    end
+  end
+
   def name? # a hash in the prefix means this is the name of the row
     @prefix.include?("\#")
   end
@@ -105,7 +121,7 @@ class Line
     @prefix.include?("*")
   end
 
-  def divider? # is this line a divider between items?
+  def item_end? # is this line a divider between items?
     @line.strip.eql?("") # empty (or spaces) string ## isn't line an array?
   end
 
@@ -142,7 +158,7 @@ class Item
   end
 
   def complete? # check if complete # last item will always be empty (or spaces) string
-    @item.last.strip.eql?("") #why does .divider? not work here?
+    @item.last.strip.eql?("") #why does .item_end? not work here?
   end
 
   def check_for_row_spans(temp_row_array)
@@ -184,7 +200,7 @@ class Item
       iterator = 0 # for each column_begin below will need to add the item_lines array truncated to the iterator.
       item_lines.each { |line|
         current_line = Line.new(line, current_row)
-        if current_line.divider? # if this is the last line in the item
+        if current_line.item_end? # if this is the last line in the item
           array_of_stacks_within_rows = check_for_row_spans(temp_row_array)
           if array_of_stacks_within_rows.size > 0
             act_on_row_spans(temp_row_array, array_of_stacks_within_rows)
@@ -193,7 +209,7 @@ class Item
         elsif current_line.name?
           @item_name = current_line #might be better to make this the text rather than object
         elsif current_line.style?
-          @item_style = current_line.line.delete('{}').gsub("-", "_").gsub(/\s.*/, "").to_sym
+          @item_style = get_style(current_line) #@item_style = current_line.line.delete('{}').gsub("-", "_").gsub(/\s.*/, "").to_sym
         elsif current_line.column_begin(table_matrix, temp_row_array).eql?(0) # if this is the first cell in a new row
           array_of_stacks_within_rows = check_for_row_spans(temp_row_array)
           if array_of_stacks_within_rows.size > 0
@@ -217,11 +233,11 @@ class Item
     table_matrix.each { |row|
       array_of_stacks_within_rows = check_for_row_spans(row)
       real_row_size =
-      if array_of_stacks_within_rows.size > 0
-        recalculate_row_size(array_of_stacks_within_rows, row.size)
-      else
-        row.size
-      end
+        if array_of_stacks_within_rows.size > 0
+          recalculate_row_size(array_of_stacks_within_rows, row.size)
+        else
+          row.size
+        end
       max_columns = real_row_size > max_columns ? real_row_size : max_columns
     }
     max_columns
@@ -229,6 +245,10 @@ class Item
 
   def recalculate_row_size(array_of_stacks_within_rows, row_size)
     row_size - array_of_stacks_within_rows.flatten.uniq.size + 1
+  end
+
+  def get_style(current_line)
+    current_line.line.delete('{}').gsub("-", "_").gsub(/\s.*/, "").to_sym
   end
 end
 
@@ -258,8 +278,8 @@ end
 
 def process_file_name(original_extension, suffix = "")
  source_file = ""
- if File.exist?("#{ARGV[0]}") #TODO: replace with (ARGV[0])
-  source_file = File.new("#{ARGV[0]}", "r") # variable with file in it.
+ if File.exist?(ARGV[0])
+  source_file = File.new(ARGV[0], "r") # variable with file in it.
   @target_arr = File.split(source_file).insert(1, "/") # target_arr is ["filepath" "/" "filename.ext"]
   @target_arr[2].sub!("#{original_extension}", "#{suffix}") # target_arr is now ["filepath" "/" "filename"]
  else
@@ -324,9 +344,9 @@ def add_edge_formatting!(line) # {{key}}
   }
 end
 
-def add_node_formatting!(line) # {key}
-  FlowchartKeywords::NODE_KEYS.select { |key| line.match(" \{#{key}\}") }.each {|key, value|
-    line.sub!(" \{#{key}\}", ", color = #{value.fetch(:color, "blue4")}, shape = #{value.fetch(:shape, "rectangle, style = rounded, penwidth = 3")}, style = #{value.fetch(:borderstyle, "solid")}")
+def add_node_formatting!(line) # {{key}}
+  FlowchartKeywords::NODE_KEYS.select { |key| line.match("\{\{#{key}\}\}") }.each {|key, value|
+    line.sub!("\{\{#{key}\}\}", ", color = #{value.fetch(:color, "blue4")}, shape = #{value.fetch(:shape, "rectangle, style = rounded, penwidth = 3")}, style = #{value.fetch(:borderstyle, "solid")}")
   }
 end
 
@@ -343,8 +363,8 @@ def section(passed_nodes, passed_edges)
 end
 
 def comment(line, new_item)
-  comment = line.match(/^\#[\s\#]/) ? true : false
-  double_whiteline = new_item && line.strip.eql?("")
+  comment = line.match(/^\#[\s\#]/) ? true : false # is this a comment?
+  double_whiteline = new_item && line.strip.eql?("") # is this the second of two blank lines in a row?
   comment | double_whiteline
 end
 
@@ -353,25 +373,22 @@ def sort_lines_into_items(original_lines)
   passed_nodes = false
   passed_edges = false
   original_lines.each { |line|
-    puts line
-    if line.include?("## EDGES") then passed_edges = true end
+    if line.include?($markers[:end_node]) then passed_edges = true end
     unless comment(line, new_item)
       case section(passed_nodes, passed_edges)
       when :node
         if new_item
           @current_item = Item.new(line)
-          puts("new item! #{@current_item.name_text}")
         end
         if @current_item
-          puts("#{@current_item.item_size}: #{line}")
           @current_item.add_line_to_item(line)
         end
-        new_item = line.strip.eql?("") ? true : false #.divider? ? true : false #
+        new_item = line.strip.eql?("") ? true : false #.item_end? ? true : false #
       else
         $overall_text[section(passed_nodes, passed_edges)] << line
       end
     end
-    if line.include?("## NODES") then passed_nodes = true end
+    if line.include?($markers[:start_node]) then passed_nodes = true end
   }
   puts "Recorded #{Item.all_items.size} items"
   Item.all_items
@@ -380,7 +397,6 @@ end
 def process_items(raw_items) # processes lines into items
   processed_lines = []
   raw_items.each { |item|
-    puts item.name_text
     matrix = item.sort_lines_into_row_arrays
     max_columns = item.max_columns(matrix)
     table_line_length_per_column = calc_table_line_length_per_column(max_columns)
