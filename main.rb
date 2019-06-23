@@ -19,18 +19,28 @@ TEMP_FILE = "#{Dir.home}/temp_graphviz.gv"
 
 ## CONSTANTS
 
-$overall_text = {
-  prenode: [],
-  node: [],
-  postnode: []
-}
-
-$markers = {
+MARKERS = {
   start_node: "## NODES",
   end_node: "## EDGES"
 }
 
+LINE_LENGTH = 40
+TABLE_BORDER_THICKNESS = 3 # TODO: move to Configure border thickness in the flowchart_keyword_list.
+
+def html(item, component, *cell)
+  if cell then puts cell end
+  case component
+  when :table_opener then "[label=<<TABLE ALIGN=\"LEFT\" BORDER=\"#{TABLE_BORDER_THICKNESS}\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\" STYLE=\"ROUNDED\" COLOR=\"#{item.color}\">"
+  when :table_new_cell then "<TD COLSPAN=\"#{cell.col_span}\" ROWSPAN=\"#{cell.row_span}\" #{cell.highlight? ? "BGCOLOR=\"#{item.color}\"><FONT COLOR=\"WHITE\"><B>" : ">"}#{add_line_breaks(cell.text, cell.col_span_thingy(table_line_length_per_column))}#{cell.highlight? ? "</B></FONT>" : ""}</TD>"
+  when :table_open_row then "<TR>"
+  when :table_close_row then "</TR>"
+  when :table_closer then "</TABLE>>, shape = #{item.shape}]"
+  end
+end
+
 ## DIALOGUE
+
+VERBOSE = true
 
 DIALOGUE_ARRAY = {
   sorted: "Sorted",
@@ -40,10 +50,13 @@ DIALOGUE_ARRAY = {
   trash: "Trashed SVG temp files"
 }
 
-VERBOSE = true
+TEMP_FILES = [ ".svg" ]
 
-LINE_LENGTH = 40
-TABLE_BORDER_THICKNESS = 3 # TODO: move to Configure border thickness in the flowchart_keyword_list.
+$overall_text = {
+  prenode: [],
+  node: [],
+  postnode: []
+}
 
 def calc_table_line_length_per_column(columns)
   case columns
@@ -53,14 +66,23 @@ def calc_table_line_length_per_column(columns)
   end
 end
 
-TEMP_FILES = [ ".svg" ]
-
 ## CLASSES
+
+class Cell
+  attr_accessor :row_span, :additional_for_row_span, :col_span
+
+  def initialize(cell)
+    @cell = cell
+  end
+
+end
+
+
 
 class Line
   @@lines = []
 
-  attr_accessor :line, :text, :prefix, :row_span, :additional_for_row_span
+  attr_accessor :line, :text, :prefix, :row_span, :additional_for_row_span, :col_span
 
   def initialize(line, current_row)
     @line = line
@@ -83,15 +105,19 @@ class Line
           iterator = (iterator + line.column_begin(previous_rows, previous_columns_on_this_row)) # might have to change these variables
           break
         else # could make this .start_with?(/[\s]*\+/) for extra security
-          iterator = iterator + 1
+          iterator += 1
         end
         } #how many +s before, added to the position of the previous stack, tells you what column it is in. first-child of first-column = 0+0= 0=first, etc. first-child of second column = 0+1=1, etc.
     end
     iterator
   end
 
+  def col_span_thingy(table_line_length_per_column)
+    table_line_length_per_column*@col_span
+  end
+
   def type?(type)
-    case type
+    symbol = case type
     when name then "\#"
     when style then "{"
     when stack then "-"
@@ -99,6 +125,7 @@ class Line
     when highlight then "*"
     when item_end then ""
     end
+    @prefix.include?(symbol)
   end
 
   def name? # a hash in the prefix means this is the name of the row
@@ -133,7 +160,7 @@ end
 class Item
   @@items = []
 
-  attr_accessor :item, :name_text, :item_name, :item_style
+  attr_accessor :item, :name_text, :item_name, :item_style, :color, :shape
 
   def initialize(name)
     @item = [] # create array, to put lines into
@@ -164,9 +191,7 @@ class Item
   def check_for_row_spans(temp_row_array)
     array_of_indent_counts = []
     temp_row_array.flatten.reverse.each { |line|
-        if line.stack?
-          array_of_indent_counts << line.prefix.count(" ")
-        end
+        if line.stack? then array_of_indent_counts << line.prefix.count(" ") end
       }
     previous_row_indent_number = -1
     iterator = 0
@@ -174,7 +199,7 @@ class Item
     array_of_indent_counts.each { |this_row_indent_number|
       if this_row_indent_number.eql?(previous_row_indent_number) then array_of_stacks_within_rows << [iterator, (iterator + 1)] end
       previous_row_indent_number = this_row_indent_number
-      iterator = iterator + 1
+      iterator += 1
     }
     array_of_stacks_within_rows
   end
@@ -188,7 +213,7 @@ class Item
       else
         line.row_span = 2 # TODO: this is specific case. What about: array_of_stacks_within_rows.flatten.uniq.size
       end
-      iterator = iterator + 1
+      iterator += 1
     }
   end
 
@@ -212,17 +237,15 @@ class Item
           @item_style = get_style(current_line) #@item_style = current_line.line.delete('{}').gsub("-", "_").gsub(/\s.*/, "").to_sym
         elsif current_line.column_begin(table_matrix, temp_row_array).eql?(0) # if this is the first cell in a new row
           array_of_stacks_within_rows = check_for_row_spans(temp_row_array)
-          if array_of_stacks_within_rows.size > 0
-            act_on_row_spans(temp_row_array, array_of_stacks_within_rows)
-          end
+          if array_of_stacks_within_rows.size > 0 then act_on_row_spans(temp_row_array, array_of_stacks_within_rows) end
           table_matrix << temp_row_array # put previous row into table_matrix
           temp_row_array = [] # wipe old row array
-          current_row = current_row + 1
+          current_row += 1
           temp_row_array.insert(current_line.column_begin(table_matrix, temp_row_array), current_line) # insert cell text at column_begin position in array.
         else # if this is neither last line in item, nor new row
           temp_row_array.insert(current_line.column_begin(table_matrix, temp_row_array), current_line) # insert cell text at column_begin position in array. #TODO: is column_begin right here?
         end #row is dealt with because the array _is_ the row. # think about the 0th item? # if skip a position, it is filled with 'nil'. that means I can use that to fill (either from top or from l-side? but how to tell diff?) with multi-span rows/columns. # Think multi-row-spans will not be registered in this way. May not be registered at all as really they are 'within' the overarching initial row. (And I'm not planning to support more creative tables yet) # do something about length for merged cells. (e.g. special characters to mean 'inherits from cell above', or 'inherits from cell to left')
-        iterator = iterator + 1
+        iterator += 1
       }
       table_matrix # need to bring in column-spanning cells that are not just table-spanning
     end
@@ -313,7 +336,6 @@ def add_line_breaks(label, line_length) # move a version of this into the table 
     while $current_line_length < line_length do
       if @label_words_array[$current_word]
         if @label_words_array[$current_word].include?("<BR/>") # if this is already formatted (e.g. if title)
-          #puts "break detected: #{@label_words_array[$current_word-1]}#{@label_words_array[$current_word]}"
           $current_line_length = line_length
           number_of_letters_left = @label_words_array[$current_word..-1].join.size
           $desired_number_of_lines = (number_of_letters_left/line_length + 1) + $current_number_of_lines + 1
@@ -321,17 +343,17 @@ def add_line_breaks(label, line_length) # move a version of this into the table 
         else
           $current_line_length += @label_words_array[$current_word].size
         end
-        $current_word +=1
+        $current_word += 1
       else
         $current_line_length = line_length # this is a bit dodgy.
       end
     end
     unless $reset
       @label_words_array = @label_words_array.insert($current_word, "<BR/>")
-      $current_word +=1
+      $current_word += 1
     end
     $reset = false
-    $current_number_of_lines +=1
+    $current_number_of_lines += 1
   end
   label = @label_words_array * " " # Do I need this? already have spaces in @label_words_array, and in next line I delete double-spaces...
   tidy_up!(label)
@@ -362,10 +384,10 @@ def section(passed_nodes, passed_edges)
   end
 end
 
-def comment(line, new_item)
+def ignore_line(line, new_item)
   comment = line.match(/^\#[\s\#]/) ? true : false # is this a comment?
-  double_whiteline = new_item && line.strip.eql?("") # is this the second of two blank lines in a row?
-  comment | double_whiteline
+  double_blank_line = new_item && line.strip.eql?("") # is this the second of two blank lines?
+  comment | double_blank_line # returns true if line is commented out or the second of two blank lines.
 end
 
 def sort_lines_into_items(original_lines)
@@ -373,24 +395,20 @@ def sort_lines_into_items(original_lines)
   passed_nodes = false
   passed_edges = false
   original_lines.each { |line|
-    if line.include?($markers[:end_node]) then passed_edges = true end
-    unless comment(line, new_item)
+    if line.include?(MARKERS[:end_node]) then passed_edges = true end
+    unless ignore_line(line, new_item)
       case section(passed_nodes, passed_edges)
       when :node
-        if new_item
-          @current_item = Item.new(line)
-        end
-        if @current_item
-          @current_item.add_line_to_item(line)
-        end
+        if new_item then @current_item = Item.new(line) end
+        if @current_item then @current_item.add_line_to_item(line) end
         new_item = line.strip.eql?("") ? true : false #.item_end? ? true : false #
       else
         $overall_text[section(passed_nodes, passed_edges)] << line
       end
     end
-    if line.include?($markers[:start_node]) then passed_nodes = true end
+    if line.include?(MARKERS[:start_node]) then passed_nodes = true end
   }
-  puts "Recorded #{Item.all_items.size} items"
+  verbose("Recorded #{Item.all_items.size} items")
   Item.all_items
 end
 
@@ -400,12 +418,12 @@ def process_items(raw_items) # processes lines into items
     matrix = item.sort_lines_into_row_arrays
     max_columns = item.max_columns(matrix)
     table_line_length_per_column = calc_table_line_length_per_column(max_columns)
-    item_color = FlowchartKeywords::NODE_KEYS[item.item_style].fetch(:color, "blue4")
-    item_shape = FlowchartKeywords::NODE_KEYS[item.item_style].fetch(:shape, "plaintext")
+    item.color = FlowchartKeywords::NODE_KEYS[item.item_style].fetch(:color, "blue4")
+    item.shape = FlowchartKeywords::NODE_KEYS[item.item_style].fetch(:shape, "plaintext")
     processed_lines << "\n" + item.name_text.delete_prefix("#")
-    if item_shape.eql?("plaintext")
-      processed_lines << "[label=<<TABLE ALIGN=\"LEFT\" BORDER=\"#{TABLE_BORDER_THICKNESS}\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\" STYLE=\"ROUNDED\" COLOR=\"#{item_color}\">" # TODO: derive this from style
-      processed_lines << "<TR>"
+    if item.shape.eql?("plaintext")
+      processed_lines << html(item, :table_opener) #"[label=<<TABLE ALIGN=\"LEFT\" BORDER=\"#{TABLE_BORDER_THICKNESS}\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\" STYLE=\"ROUNDED\" COLOR=\"#{item_color}\">" # TODO: derive this from style
+      processed_lines << html(item, :table_open_row) #"<TR>"
       matrix.each { |row|
         if row.size.eql?(0) then next end
         line_iterator = 0
@@ -418,19 +436,21 @@ def process_items(raw_items) # processes lines into items
           real_row_size = row.size
         end
         row.each { |line|
-          col_span = max_columns/real_row_size # (max_columns * each number of columns)/ real_row_size
-          row_span = line.row_span
+          cell = Cell.new(line)
+          cell.col_span = max_columns/real_row_size # (max_columns * each number of columns)/ real_row_size
+          puts "here"
+          puts cell.col_span
           if additional_for_row_span then processed_lines << additional_for_row_span end # purposefully this way round so the first sub-row doesn't get a </TR><TR>
-          if line.additional_for_row_span then additional_for_row_span = line.additional_for_row_span end
-          processed_lines << "<TD COLSPAN=\"#{col_span}\" ROWSPAN=\"#{row_span}\" #{line.highlight? ? "BGCOLOR=\"#{item_color}\"><FONT COLOR=\"WHITE\"><B>" : ">"}#{add_line_breaks(line.text, table_line_length_per_column*col_span)}#{line.highlight? ? "</B></FONT>" : ""}</TD>"
-          line_iterator = line_iterator + 1
+          if cell.additional_for_row_span then additional_for_row_span = cell.additional_for_row_span end
+          processed_lines << html(item, :table_new_cell, cell) #"<TD COLSPAN=\"#{col_span}\" ROWSPAN=\"#{row_span}\" #{line.highlight? ? "BGCOLOR=\"#{item_color}\"><FONT COLOR=\"WHITE\"><B>" : ">"}#{add_line_breaks(line.text, table_line_length_per_column*col_span)}#{line.highlight? ? "</B></FONT>" : ""}</TD>"
+          line_iterator += 1
         }
-        processed_lines << "</TR><TR>"
+        processed_lines << html(item, :table_close_row) + html(item, :table_open_row) #"</TR><TR>"
       }
       processed_lines.delete_at(-1)
-      processed_lines = processed_lines + ["</TR>", "</TABLE>>, shape = #{item_shape}]"]
+      processed_lines = processed_lines + [html(item, :table_close_row), html(item, :table_closer)] #["</TR>", "</TABLE>>, shape = #{item_shape}]"]
     else
-      processed_lines << "[label = <#{add_line_breaks(matrix[1][0].text, table_line_length_per_column*1)}>, color = #{item_color}, shape = #{item_shape}, style = solid]"
+      processed_lines << "[label = <#{add_line_breaks(matrix[1][0].text, table_line_length_per_column*1)}>, color = #{item.color}, shape = #{item.shape}, style = solid]"
     end
   }
   processed_lines
