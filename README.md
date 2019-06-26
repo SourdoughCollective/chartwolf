@@ -28,7 +28,7 @@ Table syntax is notoriously difficult. Choose two of:
 2. semantic syntax
 3. quasi-WYSIWYG (in the way Markdown as a whole is quasi-WYSIWYG and XML is not).
 
-Most table syntaxes (e.g. most flavours of Markdown) choose 3 over 2 over 1, relying on editor plugins to simplify the editing process. Chartwolf prioritises 2 over 3, with some edge-case concessions to 1. Rather than try to reproduce the table's visual appearance, we borrow from markdown list syntax to create a simple, intuitive, and (usually) semantically meaningful markup. 
+Most table syntaxes (e.g. most flavours of Markdown) choose 3 over 2 over 1, relying on editor plugins to simplify the editing process. HTML prioritises 2 over 3, with costs to 1. Chartwolf prioritises 2 over 3, with some edge-case concessions to 1. Rather than try to reproduce the table's visual appearance, we borrow from markdown list syntax to create a simple, intuitive, and (usually) semantically meaningful markup. 
 
 This syntax will not be appropriate for all table-creation use-cases. Aside from other issues, the semantic relationship gets lost with more columns. The formatting of graphviz nodes as tables, however, is an appropriate use-case, as these should have relatively few columns (and even rows).
 
@@ -63,10 +63,12 @@ In a nutshell:
 produces the following pure graphviz syntax:
 ```
 Aristotles_Function_Argument [label = <
-<TR><TD>Aristotle's Function Argument</TD></TR>
+<TABLE ALIGN="LEFT" BORDER="3" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" STYLE="ROUNDED" COLOR="BLUE4">
+<TR><TD BGCOLOR="BLUE4"><FONT COLOR="WHITE">Aristotle's Function Argument</FONT></TD></TR>
 <TR><TD>Step 1</TD></TR>
 <TR><TD>Step 2</TD></TR>
-<TR><TD>Step 3</TD></TR>>, color = blue4, shape = plaintext, style = solid]
+<TR><TD>Step 3</TD></TR>
+</TABLE>>, shape = plaintext]
 ```
 
 ### Example 2
@@ -82,8 +84,10 @@ Aristotles_Function_Argument [label = <
 produces the following pure graphviz syntax:
 ```
 Varieties_of_Utilitarianism [label = <
-<TR><TD>Varieties of Utilitarianism</TD></TR>
-<TR><TD>Variety 1</TD><TD>Variety 2</TD><TD>Variety 3</TD></TR>>, color = blue4, shape = plaintext, style = solid]
+<TABLE ALIGN="LEFT" BORDER="3" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" STYLE="ROUNDED" COLOR="BLUE4">
+<TR><TD BGCOLOR="BLUE4"><FONT COLOR="WHITE">Varieties of Utilitarianism</FONT></TD></TR>
+<TR><TD>Variety 1</TD><TD>Variety 2</TD><TD>Variety 3</TD></TR>>
+</TABLE>>, shape = plaintext]
 ```
 
 ### Example 3
@@ -102,10 +106,12 @@ Varieties_of_Utilitarianism [label = <
 produces the following pure graphviz syntax:
 ```
 Aristotles_Argument_with_Comments [label = <
-<TR><TD>Aristotle's Argument</TD></TR>
+<TABLE ALIGN="LEFT" BORDER="3" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" STYLE="ROUNDED" COLOR="BLUE4">
+<TR><TD BGCOLOR="BLUE4"><FONT COLOR="WHITE">Aristotle's Argument</FONT></TD></TR>
 <TR><TD>Step 1</TD><TD>Comment on Step 1</TD></TR>
 <TR><TD>Step 2</TD><TD>Comment on Step 2</TD></TR>
-<TR><TD>Step 3</TD><TD>Comment on Step 3</TD></TR>>, color = blue4, shape = plaintext, style = solid]
+<TR><TD>Step 3</TD><TD>Comment on Step 3</TD></TR>>
+</TABLE>>, shape = plaintext]
 ```
 
 ## TODO
