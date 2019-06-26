@@ -27,16 +27,7 @@ MARKERS = {
 LINE_LENGTH = 40
 TABLE_BORDER_THICKNESS = 3 # TODO: move to Configure border thickness in the flowchart_keyword_list.
 
-def html(item, component, *cell)
-  if cell then puts cell end
-  case component
-  when :table_opener then "[label=<<TABLE ALIGN=\"LEFT\" BORDER=\"#{TABLE_BORDER_THICKNESS}\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\" STYLE=\"ROUNDED\" COLOR=\"#{item.color}\">"
-  when :table_new_cell then "<TD COLSPAN=\"#{cell.col_span}\" ROWSPAN=\"#{cell.row_span}\" #{cell.highlight? ? "BGCOLOR=\"#{item.color}\"><FONT COLOR=\"WHITE\"><B>" : ">"}#{add_line_breaks(cell.text, cell.col_span_thingy(table_line_length_per_column))}#{cell.highlight? ? "</B></FONT>" : ""}</TD>"
-  when :table_open_row then "<TR>"
-  when :table_close_row then "</TR>"
-  when :table_closer then "</TABLE>>, shape = #{item.shape}]"
-  end
-end
+
 
 ## DIALOGUE
 
@@ -75,9 +66,19 @@ class Cell
     @cell = cell
   end
 
+  def highlight? # an asterisk in the prefix means highlight the row. (and highlighting usually means colour background + bold.)
+    @cell.highlight?
+  end
+
+  def text # an asterisk in the prefix means highlight the row. (and highlighting usually means colour background + bold.)
+    @cell.text
+  end
+
+  def col_span_thingy(table_line_length_per_column)
+    table_line_length_per_column*@col_span
+  end
+
 end
-
-
 
 class Line
   @@lines = []
@@ -112,9 +113,9 @@ class Line
     iterator
   end
 
-  def col_span_thingy(table_line_length_per_column)
-    table_line_length_per_column*@col_span
-  end
+#  def col_span_thingy(table_line_length_per_column)
+#    table_line_length_per_column*@col_span
+#  end
 
   def type?(type)
     symbol = case type
@@ -160,7 +161,7 @@ end
 class Item
   @@items = []
 
-  attr_accessor :item, :name_text, :item_name, :item_style, :color, :shape
+  attr_accessor :item, :name_text, :item_name, :item_style, :color, :shape, :table_line_length_per_column
 
   def initialize(name)
     @item = [] # create array, to put lines into
@@ -276,6 +277,16 @@ class Item
 end
 
 ## METHODS
+
+def html(item, component, cell = nil)
+  case component
+  when :table_opener then "[label=<<TABLE ALIGN=\"LEFT\" BORDER=\"#{TABLE_BORDER_THICKNESS}\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\" STYLE=\"ROUNDED\" COLOR=\"#{item.color}\">"
+  when :table_new_cell then "<TD COLSPAN=\"#{cell.col_span}\" ROWSPAN=\"#{cell.row_span}\" #{cell.highlight? ? "BGCOLOR=\"#{item.color}\"><FONT COLOR=\"WHITE\"><B>" : ">"}#{add_line_breaks(cell.text, cell.col_span_thingy(item.table_line_length_per_column))}#{cell.highlight? ? "</B></FONT>" : ""}</TD>"
+  when :table_open_row then "<TR>"
+  when :table_close_row then "</TR>"
+  when :table_closer then "</TABLE>>, shape = #{item.shape}]"
+  end
+end
 
 def tidy_up!(label)
   label.gsub!(/\s+/, " ") # tidy up: condense multiple spaces
@@ -417,7 +428,7 @@ def process_items(raw_items) # processes lines into items
   raw_items.each { |item|
     matrix = item.sort_lines_into_row_arrays
     max_columns = item.max_columns(matrix)
-    table_line_length_per_column = calc_table_line_length_per_column(max_columns)
+    item.table_line_length_per_column = calc_table_line_length_per_column(max_columns)
     item.color = FlowchartKeywords::NODE_KEYS[item.item_style].fetch(:color, "blue4")
     item.shape = FlowchartKeywords::NODE_KEYS[item.item_style].fetch(:shape, "plaintext")
     processed_lines << "\n" + item.name_text.delete_prefix("#")
