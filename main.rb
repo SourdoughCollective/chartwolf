@@ -27,8 +27,6 @@ MARKERS = {
 LINE_LENGTH = 40
 TABLE_BORDER_THICKNESS = 3 # TODO: move to Configure border thickness in the flowchart_keyword_list.
 
-
-
 ## DIALOGUE
 
 VERBOSE = true
@@ -449,8 +447,9 @@ def process_items(raw_items) # processes lines into items
         row.each { |line|
           cell = Cell.new(line)
           cell.col_span = max_columns/real_row_size # (max_columns * each number of columns)/ real_row_size
+          cell.row_span = line.row_span
           puts "here"
-          puts cell.col_span
+          puts cell.row_span
           if additional_for_row_span then processed_lines << additional_for_row_span end # purposefully this way round so the first sub-row doesn't get a </TR><TR>
           if cell.additional_for_row_span then additional_for_row_span = cell.additional_for_row_span end
           processed_lines << html(item, :table_new_cell, cell) #"<TD COLSPAN=\"#{col_span}\" ROWSPAN=\"#{row_span}\" #{line.highlight? ? "BGCOLOR=\"#{item_color}\"><FONT COLOR=\"WHITE\"><B>" : ">"}#{add_line_breaks(line.text, table_line_length_per_column*col_span)}#{line.highlight? ? "</B></FONT>" : ""}</TD>"
