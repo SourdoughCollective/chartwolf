@@ -431,8 +431,8 @@ def process_items(raw_items) # processes lines into items
     item.shape = FlowchartKeywords::NODE_KEYS[item.item_style].fetch(:shape, "plaintext")
     processed_lines << "\n" + item.name_text.delete_prefix("#")
     if item.shape.eql?("plaintext")
-      processed_lines << html(item, :table_opener) #"[label=<<TABLE ALIGN=\"LEFT\" BORDER=\"#{TABLE_BORDER_THICKNESS}\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\" STYLE=\"ROUNDED\" COLOR=\"#{item_color}\">" # TODO: derive this from style
-      processed_lines << html(item, :table_open_row) #"<TR>"
+      processed_lines << html(item, :table_opener)
+      processed_lines << html(item, :table_open_row)
       matrix.each { |row|
         if row.size.eql?(0) then next end
         line_iterator = 0
@@ -448,17 +448,18 @@ def process_items(raw_items) # processes lines into items
           cell = Cell.new(line)
           cell.col_span = max_columns/real_row_size # (max_columns * each number of columns)/ real_row_size
           cell.row_span = line.row_span
+          cell.additional_for_row_span = line.additional_for_row_span
           puts "here"
           puts cell.row_span
           if additional_for_row_span then processed_lines << additional_for_row_span end # purposefully this way round so the first sub-row doesn't get a </TR><TR>
           if cell.additional_for_row_span then additional_for_row_span = cell.additional_for_row_span end
-          processed_lines << html(item, :table_new_cell, cell) #"<TD COLSPAN=\"#{col_span}\" ROWSPAN=\"#{row_span}\" #{line.highlight? ? "BGCOLOR=\"#{item_color}\"><FONT COLOR=\"WHITE\"><B>" : ">"}#{add_line_breaks(line.text, table_line_length_per_column*col_span)}#{line.highlight? ? "</B></FONT>" : ""}</TD>"
+          processed_lines << html(item, :table_new_cell, cell)
           line_iterator += 1
         }
-        processed_lines << html(item, :table_close_row) + html(item, :table_open_row) #"</TR><TR>"
+        processed_lines << html(item, :table_close_row) + html(item, :table_open_row)
       }
       processed_lines.delete_at(-1)
-      processed_lines = processed_lines + [html(item, :table_close_row), html(item, :table_closer)] #["</TR>", "</TABLE>>, shape = #{item_shape}]"]
+      processed_lines = processed_lines + [html(item, :table_close_row), html(item, :table_closer)]
     else
       processed_lines << "[label = <#{add_line_breaks(matrix[1][0].text, table_line_length_per_column*1)}>, color = #{item.color}, shape = #{item.shape}, style = solid]"
     end
