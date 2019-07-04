@@ -116,7 +116,8 @@ Aristotles_Argument_with_Comments [label = <
 
 ## TODO
 
-- whitespace on RHS of nodes. (Maybe Linux-only?)
+- (bug) extra whitespace on RHS of nodes. (Maybe Linux-only?)
+- (bug) rounded corners of boxes also have little points.
 - make the calculation of width/height-sharing match the specification (see wiki). i.e. 'generations' (rather than items) share width equally. Allows to differentiate between 'parent-child-grandchild' (third-third-third) and 'parent-(two children)' (half-quarter-quarter).
 - make the above work for rack as well as stack.
 - allow for various outputs (especially stopping the process at SVG stage for those who don't want inkscape/pdf)
