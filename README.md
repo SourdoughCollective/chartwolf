@@ -47,8 +47,8 @@ In a nutshell:
   - Second line (TODO: option include this in name line instead).
 - `- This is a sentence` is a new item in a *vertical* list (a 'stack' -- the hyphen looks like a pancake)
 - `+ This is a sentence` is a new item in a *horizontal* list (the plus sign doesn't look like a pancake)
-- `-* This is a sentence` and `+* This is a sentence` are as before but their table cell is highlighted (i.e. font colour becomes background colour and vice versa).
-- indenting by one space more than the previous item turns an item into a child of the previous item.
+- `-* This is a sentence` and `+* This is a sentence` are as above but their table cell is highlighted (i.e. font colour becomes background colour and vice versa).
+- Indenting by one space more than the previous item turns an item into a child of the previous item.
 
 ### Example 1
 
