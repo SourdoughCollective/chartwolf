@@ -117,9 +117,9 @@ class Line
 
   def type?(type)
     symbol = case type
-    when name then "\#"
-    when style then "{"
-    when stack then "-"
+    when :name then "\#"
+    when :style then "{"
+    when :stack then "-"
     when rack then "+"
     when highlight then "*"
     when item_end then ""
@@ -127,7 +127,7 @@ class Line
     @prefix.include?(symbol)
   end
 
-  def name? # a hash in the prefix means this is the name of the row
+  def name? # [DEPRECATED: type? method] a hash in the prefix means this is the name of the row
     @prefix.include?("\#")
   end
 
@@ -135,15 +135,15 @@ class Line
     @line.include?("{")
   end
 
-  def stack? # an hyphen in the prefix means a 'stack' i.e. vertical list
+  def stack? # [DEPRECATED: type? method] an hyphen in the prefix means a 'stack' i.e. vertical list
     @prefix.include?("-") # any advantage to  @line.match(/^[\s]*\-/)   ?
   end
 
-  def rack? # an plus in the prefix means a 'rack' i.e. horizontal list
+  def rack? # [DEPRECATED: type? method] a plus in the prefix means a 'rack' i.e. horizontal list
     @prefix.include?("+")
   end
 
-  def highlight? # an asterisk in the prefix means highlight the row. (and highlighting usually means colour background + bold.)
+  def highlight? # [DEPRECATED: type? method] an asterisk in the prefix means highlight the row. (and highlighting usually means colour background + bold.)
     @prefix.include?("*")
   end
 
@@ -190,7 +190,7 @@ class Item
   def check_for_row_spans(temp_row_array)
     array_of_indent_counts = []
     temp_row_array.flatten.reverse.each { |line|
-        if line.stack? then array_of_indent_counts << line.prefix.count(" ") end
+        if line.type?(:stack) then array_of_indent_counts << line.prefix.count(" ") end
       }
     previous_row_indent_number = -1
     iterator = 0
@@ -230,7 +230,7 @@ class Item
             act_on_row_spans(temp_row_array, array_of_stacks_within_rows)
           end
           table_matrix << temp_row_array # add the last row to the table_matrix (not including divider.)
-        elsif current_line.name?
+        elsif current_line.type?(:name)
           @item_name = current_line #might be better to make this the text rather than object
         elsif current_line.style?
           @item_style = get_style(current_line) #@item_style = current_line.line.delete('{}').gsub("-", "_").gsub(/\s.*/, "").to_sym
@@ -449,8 +449,6 @@ def process_items(raw_items) # processes lines into items
           cell.col_span = max_columns/real_row_size # (max_columns * each number of columns)/ real_row_size
           cell.row_span = line.row_span
           cell.additional_for_row_span = line.additional_for_row_span
-          puts "here"
-          puts cell.row_span
           if additional_for_row_span then processed_lines << additional_for_row_span end # purposefully this way round so the first sub-row doesn't get a </TR><TR>
           if cell.additional_for_row_span then additional_for_row_span = cell.additional_for_row_span end
           processed_lines << html(item, :table_new_cell, cell)
