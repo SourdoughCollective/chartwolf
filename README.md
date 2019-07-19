@@ -121,3 +121,9 @@ Aristotles_Argument_with_Comments [label = <
 - make the calculation of width/height-sharing match the specification (see wiki). i.e. 'generations' (rather than items) share width equally. Allows to differentiate between 'parent-child-grandchild' (third-third-third) and 'parent-(two children)' (half-quarter-quarter).
 - make the above work for rack as well as stack.
 - allow for various outputs (especially stopping the process at SVG stage for those who don't want inkscape/pdf)
+
+## Alternatives
+
+- Hand-draw. (Advantages: WYSIWYG, customisable. Downsides: More time-consuming, less easy to edit, more time spent on style and less on substance.).
+- Simply write in a graphviz language (e.g. dot). (Advantages: More customisable. Downsides: more verbose and repetitive syntax, especially for tables).
+- Argdown [discovered after this project was published to Github!]. (Advantages: proper logical structure, much more developed project with plugins variety of outputes. Downsides: (maybe?) tables less easy).
