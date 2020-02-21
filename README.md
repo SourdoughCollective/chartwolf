@@ -127,3 +127,4 @@ Aristotles_Argument_with_Comments [label = <
 - Hand-draw. (Advantages: WYSIWYG, customisable. Downsides: More time-consuming, less easy to edit, more time spent on style and less on substance.).
 - Simply write in a graphviz language (e.g. dot). (Advantages: More customisable. Downsides: more verbose and repetitive syntax, especially for tables).
 - Argdown [discovered after this project was published to Github!]. (Advantages: proper logical structure, much more developed project with plugins variety of outputes. Downsides: (maybe?) tables less easy).
+- PlantUML [discovered after this project was published to Github!]
